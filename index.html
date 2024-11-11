@@ -3,26 +3,96 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Simple Web App</title>
+  <title>Simple Room Booking App</title>
+  <style>
+    body { font-family: Arial, sans-serif; }
+    h1 { color: #333; }
+    .form-container, .bookings { margin: 20px 0; }
+    .bookings { border-top: 1px solid #ddd; padding-top: 10px; }
+    input, select, button { margin: 5px 0; padding: 8px; font-size: 1em; }
+    button { cursor: pointer; }
+    .booking-item { padding: 5px; border: 1px solid #ddd; margin: 5px 0; }
+  </style>
 </head>
 <body>
 
-  <h1>Welcome to My Simple Web App!</h1>
-  <p>Enter your name below and click "Greet Me!"</p>
+  <h1>Room Booking App</h1>
 
-  <input type="text" id="nameInput" placeholder="Enter your name" />
-  <button onclick="greetUser()">Greet Me!</button>
+  <div class="form-container">
+    <h2>Book a Room</h2>
+    <label for="room">Select Room:</label>
+    <select id="room">
+      <option value="Room A">Room A</option>
+      <option value="Room B">Room B</option>
+      <option value="Room C">Room C</option>
+    </select><br>
 
-  <p id="greeting"></p>
+    <label for="date">Select Date:</label>
+    <input type="date" id="date"><br>
+
+    <label for="time">Select Time:</label>
+    <input type="time" id="time"><br>
+
+    <button onclick="bookRoom()">Book Room</button>
+  </div>
+
+  <div class="bookings">
+    <h2>Bookings</h2>
+    <div id="bookingsList">No bookings yet.</div>
+  </div>
 
   <script>
-    function greetUser() {
-      const name = document.getElementById('nameInput').value;
-      const greetingMessage = `Hello, ${name}! Welcome to this simple app.`;
-      document.getElementById('greeting').textContent = greetingMessage;
+    const bookings = [];
+
+    function bookRoom() {
+      const room = document.getElementById('room').value;
+      const date = document.getElementById('date').value;
+      const time = document.getElementById('time').value;
+
+      if (!date || !time) {
+        alert("Please select both a date and time.");
+        return;
+      }
+
+      // Check if the room is already booked for the same date and time
+      const isBooked = bookings.some(booking => 
+        booking.room === room && booking.date === date && booking.time === time
+      );
+
+      if (isBooked) {
+        alert("This room is already booked at the selected date and time.");
+        return;
+      }
+
+      // Add the booking to the list
+      bookings.push({ room, date, time });
+      displayBookings();
+      clearForm();
+    }
+
+    function displayBookings() {
+      const bookingsList = document.getElementById('bookingsList');
+      bookingsList.innerHTML = "";
+
+      if (bookings.length === 0) {
+        bookingsList.textContent = "No bookings yet.";
+        return;
+      }
+
+      bookings.forEach((booking, index) => {
+        const bookingItem = document.createElement('div');
+        bookingItem.classList.add('booking-item');
+        bookingItem.textContent = `Room: ${booking.room}, Date: ${booking.date}, Time: ${booking.time}`;
+        bookingsList.appendChild(bookingItem);
+      });
+    }
+
+    function clearForm() {
+      document.getElementById('room').value = "Room A";
+      document.getElementById('date').value = "";
+      document.getElementById('time').value = "";
     }
   </script>
 
 </body>
 </html>
-
